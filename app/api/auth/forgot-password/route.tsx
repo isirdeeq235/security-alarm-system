@@ -56,7 +56,8 @@ export async function POST(request: NextRequest) {
       code: 200,
       message: "Email sent successfully",
     });
-  } catch {
+  } catch (error: any) {
+    console.error("Error in forgot-password route:", error);
     return NextResponse.json({
       code: 500,
       message: "Internal server error",

@@ -24,11 +24,15 @@ export default auth(async (req) => {
     if (isLoggedIn) {
       const session = await auth();
 
-      if (session && session.user.role) {
-        if (session?.user.role === "ADMIN")
+      if (session && session.user) {
+        if (session.user.role === "ADMIN") {
           return Response.redirect(new URL(ADMIN_LOGGEDIN_REDIRECT, nextUrl));
-        if (session?.user.role === "USER")
+        } else if (session.user.role === "USER") {
           return Response.redirect(new URL(USER_LOGGEDIN_REDIRECT, nextUrl));
+        }
+      } else {
+        // Handle case where session or session.user is undefined
+        // Optionally, you can redirect to an error page or a specific route
       }
     }
     return;

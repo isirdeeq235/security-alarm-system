@@ -6,7 +6,6 @@ import ResetPassword from "@/emails/ResetPassword";
 import bcrypt from "bcrypt";
 
 import { v4 as uuidv4 } from "uuid";
-
 export async function POST(request: NextRequest) {
   const requestBody = await request.json();
   const { matric } = requestBody;
@@ -18,12 +17,12 @@ export async function POST(request: NextRequest) {
 
     if (!user?.email) {
       return NextResponse.json({
-        code: 500,
-        message: "Profile not updated",
+        code: 404,
+        message: "User not found",
       });
     }
-    const newPassword = generateRandomString(8);
 
+    const newPassword = generateRandomString(8);
     const password = await bcrypt.hash(newPassword, 10);
 
     await prisma.user.update({
@@ -56,7 +55,7 @@ export async function POST(request: NextRequest) {
       code: 200,
       message: "Email sent successfully",
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in forgot-password route:", error);
     return NextResponse.json({
       code: 500,

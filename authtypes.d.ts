@@ -9,7 +9,4 @@ declare module "next-auth" {
   interface Session {
     user: ExtendedUser;
   }
-  interface User {
-    role?: UserRole;
-  }
 }

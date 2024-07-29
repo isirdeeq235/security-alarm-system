@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "admin": "npx prisma migrate dev && node ./createDefaultUser.ts"
+    "admin": "npx prisma migrate dev && node ./createDefaultUser.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "-": "^0.0.1",

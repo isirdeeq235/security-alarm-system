@@ -133,7 +133,7 @@ const Profile = ({ id, user }: { id: string; user: any }) => {
               <CardHeader>
                 <CardTitle>Profile</CardTitle>
                 <CardDescription>
-                  Make changes to your account here. Click save when you're
+                  Make changes to your account here. Click save when you are
                   done.
                 </CardDescription>
               </CardHeader>
@@ -307,7 +307,7 @@ const Profile = ({ id, user }: { id: string; user: any }) => {
               <CardHeader>
                 <CardTitle>Password</CardTitle>
                 <CardDescription>
-                  Change your password here. After saving, you'll be logged out.
+                  Change your password here. After saving, you&apos;ll be logged out.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">

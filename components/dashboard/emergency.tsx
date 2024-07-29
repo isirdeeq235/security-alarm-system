@@ -53,7 +53,7 @@ const Emergency = ({ id }: { id: string }) => {
     const intervalId = setInterval(fetchIsRequestValue, 1000);
 
     return () => clearInterval(intervalId);
-  }, []); //review this line
+  }, [id]); //review this line
 
   if (isRequesting) return <RequestLoader />;
   if (isResponding) return <RespondLoader />;

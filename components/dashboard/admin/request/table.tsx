@@ -5,7 +5,7 @@ import { DataTable } from "./data-table";
 import { useEffect } from "react";
 import axios from "axios";
 
-export default async function EmergencyRequestPage({
+export default function EmergencyRequestPage({
   requestDetails,
 }: {
   requestDetails: Request[];

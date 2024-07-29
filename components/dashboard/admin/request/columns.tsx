@@ -4,15 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-
+import { ArrowUpDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -31,6 +27,94 @@ export type Request = {
   status: "isRequest" | "isResponding" | "isDone" | null;
 };
 
+// Cell component for status column
+const StatusCell: React.FC<{ row: any }> = ({ row }) => {
+  const status = row.getValue("status") as string;
+
+  return (
+    <Badge
+      className={`${
+        status === `isDone`
+          ? `bg-emerald-50`
+          : status === `isResponding`
+          ? `bg-purple-500`
+          : `bg-red-500`
+      } `}
+    >
+      {status === "isDone"
+        ? "Completed"
+        : status === "isResponding"
+        ? "Processing"
+        : "Need Help"}
+    </Badge>
+  );
+};
+
+// Cell component for action column
+const ActionCell: React.FC<{ row: any }> = ({ row }) => {
+  const [selectedStatus, setSelectedStatus] = React.useState<
+    "none" | "onTheWay" | "success"
+  >("none");
+
+  const id = row.original.id as string;
+  const status = row.getValue("status");
+  const router = useRouter();
+
+  const handleCheckboxChange = async (status: "onTheWay" | "success") => {
+    try {
+      const res = await axios.post("/api/dashboard/admin/emergency", {
+        id,
+        status,
+      });
+
+      if (res.data.message === "success") {
+        router.refresh();
+      }
+      if (selectedStatus !== status) {
+        setSelectedStatus(status);
+      } else {
+        setSelectedStatus("none");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          "Axios Error:",
+          error.response?.data || error.message
+        );
+      } else {
+        console.error("Unexpected Error:", error);
+      }
+    }
+  };
+
+  const isButtonDisabled = status === "isDone";
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" disabled={isButtonDisabled}>
+          Set
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuCheckboxItem
+          checked={selectedStatus === "onTheWay"}
+          onCheckedChange={() => handleCheckboxChange("onTheWay")}
+          disabled={status === "isResponding"}
+        >
+          Process
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem
+          checked={selectedStatus === "success"}
+          onCheckedChange={() => handleCheckboxChange("success")}
+        >
+          Complete
+        </DropdownMenuCheckboxItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 export const columns: ColumnDef<Request>[] = [
   {
     accessorKey: "sn",
@@ -44,7 +128,6 @@ export const columns: ColumnDef<Request>[] = [
       </Button>
     ),
   },
-
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -88,96 +171,11 @@ export const columns: ColumnDef<Request>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-
-      return (
-        <Badge
-          className={`${
-            status === `isDone`
-              ? `bg-emerald-50`
-              : status === `isResponding`
-              ? `bg-purple-500`
-              : `bg-red-500`
-          } `}
-        >
-          {status === "isDone"
-            ? "Completed"
-            : status === "isResponding"
-            ? "Processing"
-            : "Need Help"}
-        </Badge>
-      );
-    },
+    cell: StatusCell,
   },
   {
     accessorKey: "action",
     header: "Action",
-
-    cell: ({ row }) => {
-      const [selectedStatus, setSelectedStatus] = React.useState<
-        "none" | "onTheWay" | "success"
-      >("none");
-
-      const id = row.original.id as string;
-      const status = row.getValue("status");
-      const router = useRouter();
-
-      const handleCheckboxChange = async (status: "onTheWay" | "success") => {
-        try {
-          const res = await axios.post("/api/dashboard/admin/emergency", {
-            id,
-            status,
-          });
-
-          if (res.data.message === "success") {
-            router.refresh();
-          }
-          if (selectedStatus !== status) {
-            setSelectedStatus(status);
-          } else {
-            setSelectedStatus("none");
-          }
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            console.error(
-              "Axios Error:",
-              error.response?.data || error.message
-            );
-          } else {
-            console.error("Unexpected Error:", error);
-          }
-        }
-      };
-
-      const isButtonDisabled = status === "isDone";
-
-      return (
-        <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" disabled={isButtonDisabled}>
-                Set
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuCheckboxItem
-                checked={selectedStatus === "onTheWay"}
-                onCheckedChange={() => handleCheckboxChange("onTheWay")}
-                disabled={status === "isResponding"}
-              >
-                Process
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                checked={selectedStatus === "success"}
-                onCheckedChange={() => handleCheckboxChange("success")}
-              >
-                Complete
-              </DropdownMenuCheckboxItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </>
-      );
-    },
+    cell: ActionCell,
   },
 ];

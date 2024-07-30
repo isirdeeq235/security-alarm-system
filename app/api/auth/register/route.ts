@@ -4,7 +4,6 @@ import * as Schemas from "@/schemas";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  
   const requestBody = await request.json();
   const body: Schemas.RegisterType = requestBody.data;
 
@@ -36,8 +35,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     return NextResponse.json({
       code: 500,
-      message:
-        "An error occurred while creating an account.",
+      message: error.message,
     });
   }
 }

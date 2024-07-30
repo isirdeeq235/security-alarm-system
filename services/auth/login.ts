@@ -20,7 +20,7 @@ const submitLogin = async (login: string, password: string) => {
         case "CallbackRouteError":
           return { code: 401, message: "Invalid Matric or Password" };
         default:
-          return { code: 500, message: error.message };
+          return { code: 500, message: error.type };
       }
     }
     throw error;

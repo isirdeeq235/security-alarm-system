@@ -17,10 +17,10 @@ const submitLogin = async (login: string, password: string) => {
   } catch (error: any) {
     if (error instanceof AuthError) {
       switch (error.type) {
-        case "CallbackRouteError":
+        case "CredentialsSignin":
           return { code: 401, message: "Invalid Matric or Password" };
         default:
-          return { code: 500, message: error.type };
+          return { code: 500, message: "Something went wrong" };
       }
     }
     throw error;

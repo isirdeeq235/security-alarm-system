@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import authConfig from "@/auth.config";
 import {
   ADMIN_LOGGEDIN_REDIRECT,
+  DEFAULT_LOGGEDIN_REDIRECT,
   USER_LOGGEDIN_REDIRECT,
   apiAuthPrefix,
   authRoutes,
@@ -22,12 +23,14 @@ export default auth(async (req) => {
 
   if (isAuthRoute) {
     if (isLoggedIn) {
-      const session = await auth();
+      return Response.redirect(new URL(DEFAULT_LOGGEDIN_REDIRECT, nextUrl));
 
-      if (session?.user?.role === "ADMIN")
-        return Response.redirect(new URL(ADMIN_LOGGEDIN_REDIRECT, nextUrl));
-      if (session?.user?.role === "USER")
-        return Response.redirect(new URL(USER_LOGGEDIN_REDIRECT, nextUrl));
+      // const session = await auth();
+
+      // if (session?.user?.role === "ADMIN")
+      //   return Response.redirect(new URL(ADMIN_LOGGEDIN_REDIRECT, nextUrl));
+      // if (session?.user?.role === "USER")
+      //   return Response.redirect(new URL(USER_LOGGEDIN_REDIRECT, nextUrl));
     }
     return;
   }

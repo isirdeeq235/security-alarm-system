@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const { matric, password } = await Schemas.RegisterSchema.parseAsync(body);
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const findEmail = await prisma.user.findUnique({
+    const findEmail = await prisma.user.findUniqueOrThrow({
       where: { matric },
     });
 
